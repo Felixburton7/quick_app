@@ -35,6 +35,11 @@ class CasparPage extends StatelessWidget {
             icon: CupertinoIcons.tree,
           ),
           FunFactCard(
+            fact: "Caspar loves Kenny",
+            color: CupertinoColors.activeBlue,
+            icon: CupertinoIcons.game_controller,
+          ),
+          FunFactCard(
             fact: "Caspar is a master at board games.",
             color: CupertinoColors.activeBlue,
             icon: CupertinoIcons.game_controller,
