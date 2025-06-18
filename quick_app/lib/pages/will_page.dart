@@ -24,6 +24,7 @@ class WillPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 24),
+          WillBioSection(),
           FunFactCard(
             fact: "Will once biked 100 miles in a single day!",
             color: CupertinoColors.activeOrange,
@@ -40,6 +41,47 @@ class WillPage extends StatelessWidget {
             icon: CupertinoIcons.question_circle,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class WillBioSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Text(
+                  'Height',
+                  style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontWeight: FontWeight.bold, color: CupertinoColors.black),
+                ),
+                SizedBox(height: 4),
+                Text('1.98cm', style: TextStyle(color: CupertinoColors.black)),
+              ],
+            ),
+            Column(
+              children: [
+                Text(
+                  'Weight',
+                  style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontWeight: FontWeight.bold, color: CupertinoColors.black),
+                ),
+                SizedBox(height: 4),
+                Text('200kg', style: TextStyle(color: CupertinoColors.black)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
