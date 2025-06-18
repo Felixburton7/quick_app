@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/home_page.dart';
 import 'pages/caspar_page.dart';
 import 'pages/will_page.dart';
@@ -11,32 +12,85 @@ void main() {
   runApp(CasparVsWillApp());
 }
 
-class CasparVsWillApp extends StatelessWidget {
+class CasparVsWillApp extends StatefulWidget {
+  @override
+  _CasparVsWillAppState createState() => _CasparVsWillAppState();
+}
+
+class _CasparVsWillAppState extends State<CasparVsWillApp> {
+  bool _isDarkMode = false;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+      _initialized = true;
+    });
+  }
+
+  Future<void> _updateTheme(bool isDark) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = isDark;
+    });
+    await prefs.setBool('isDarkMode', isDark);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_initialized) {
+      return const CupertinoApp(
+        home: Center(child: CupertinoActivityIndicator()),
+      );
+    }
     return CupertinoApp(
       title: 'Caspar vs Will',
-      theme: AppTheme.cupertinoTheme,
-      home: MainNavigation(),
+      theme: _isDarkMode
+          ? CupertinoThemeData(brightness: Brightness.dark)
+          : AppTheme.cupertinoTheme,
+      home: MainNavigation(
+        isDarkMode: _isDarkMode,
+        onThemeChanged: _updateTheme,
+      ),
     );
   }
 }
 
 class MainNavigation extends StatefulWidget {
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
+  MainNavigation({required this.isDarkMode, required this.onThemeChanged});
+
   @override
   _MainNavigationState createState() => _MainNavigationState();
 }
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [
-    HomePage(),
-    CasparPage(),
-    WillPage(),
-    ComparePage(),
-    GalleryPage(),
-    SettingsPage(),
-  ];
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomePage(),
+      CasparPage(),
+      WillPage(),
+      ComparePage(),
+      GalleryPage(),
+      SettingsPage(
+        isDarkMode: widget.isDarkMode,
+        onThemeChanged: widget.onThemeChanged,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
