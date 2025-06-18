@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'
     show Colors, Card, RoundedRectangleBorder; // For card backgrounds
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ComparePage extends StatefulWidget {
   @override
@@ -43,6 +44,22 @@ class _ComparePageState extends State<ComparePage> {
   int willScore = 0;
   int currentIndex = 0;
   bool finished = false;
+  int _cardLimit = 10;
+
+  static const String compareLimitPrefKey = 'compareCardLimit';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCardLimit();
+  }
+
+  Future<void> _loadCardLimit() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _cardLimit = prefs.getInt(compareLimitPrefKey) ?? 10;
+    });
+  }
 
   void _onSwipe(CardSwiperDirection dir) {
     setState(() {
@@ -52,7 +69,7 @@ class _ComparePageState extends State<ComparePage> {
         willScore++;
       }
       currentIndex++;
-      if (currentIndex >= battles.length) {
+      if (currentIndex >= _cardLimit || currentIndex >= battles.length) {
         finished = true;
       }
     });
@@ -87,7 +104,7 @@ class _ComparePageState extends State<ComparePage> {
             if (!finished)
               Expanded(
                 child: CardSwiper(
-                  cardsCount: battles.length,
+                  cardsCount: (_cardLimit < battles.length ? _cardLimit : battles.length),
                   numberOfCardsDisplayed: 2,
                   isLoop: false,
                   onSwipe: (previousIndex, currentIndex, direction) {
